@@ -17,7 +17,7 @@ Controller : Provider를 enable하며 event tracing session을 시작하고 멈�
 
 Provider : event를 제공한다.
 
-Consumers : event를 소모한다.
+Consumers : event를 소모한다. 
 
 
 참고사이트
