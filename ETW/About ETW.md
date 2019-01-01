@@ -8,6 +8,8 @@ Application 디버깅 및 퍼포먼스 분석에 이용할 수 있으며 C, C++ 
 
 
 ![ETW](https://docs.microsoft.com/en-us/windows/desktop/etw/images/etdiag2.png)
+
+
 ETW는 위 Dialog과 같이 3개의 컴포넌트가 존재한다.
 
 Controller : Provider를 enable하며 event tracing session을 시작하고 멈춘다.
