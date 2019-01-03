@@ -35,3 +35,4 @@
 ### ESC, Enter 누를 시 종료 방지
 	if ((pMsg->wParam == VK_ESCAPE) || (pMsg->wParam == VK_RETURN))
 		return true;
+위 코드를 PreTranslateMessage에 삽입
