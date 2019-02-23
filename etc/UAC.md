@@ -70,3 +70,13 @@ int main()
     	return 0;
 }
 ```
+
+### 190223 추가
+
+컴파일 시 매니페스트에 Ui Access = true로 설정하기 위해서는 전자서명이 필요하며 System32폴더와 같은 신뢰할 수 있는 장소에 있어야 한다.
+
+_출처 : https://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/350ceab8-436b-4ef1-8512-3fee4b470c0a/problem-with-manifest-and-uiaccess-set-to-true?forum=windowsgeneraldevelopmentissues_
+
+WinSAT.exe에는 Ui Access = False로 설정되어있다.
+
+어디서 본건데 신뢰할 수 있는 장소에서는 flag가 무시된다고 하는데 어떤놈은 UI경고창이 뜨고 어떤놈은 안뜬다. 일단 두 케이스에 대한 차이점 조사 예정.
