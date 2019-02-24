@@ -100,3 +100,5 @@ C:\Windows \에서는 C:\Windows \system32를 주소창을 통해 접근이 가�
 ProcessExplorer로 주소찍어보면 Path에 공백이 사라진것을 볼 수 있다.
 
 ![123](https://user-images.githubusercontent.com/41255291/53297290-b61e5300-385f-11e9-8a0b-0f7e03b31275.png)
+
+실험하다가 컴퓨터 강제 포맷되어 테스트 커밋
