@@ -24,7 +24,7 @@ aesenclast xmm0, xmm11
 
 키스케줄링은 128비트는 SIMD를 이용해 빠른 연산이 가능한데 192, 256은 힘들어보인다.
 
-COSIC 문서를 참조하여 파이프라이닝을 고려한 128, 192, 256 AES 고속 연산을 아래와 같이 구현해 보았다.
+COSIC 문서를 참조하여 파이프라이닝을 고려한 AES-128 연산을 아래와 같이 구현해 보았다.
 
 파일 입출력과 같이 진행해 속도가 빠르진 않지만 기존 코드에 비해 6배 이상의 속도가 나왔다.
 
@@ -33,8 +33,6 @@ COSIC 문서를 참조하여 파이프라이닝을 고려한 128, 192, 256 AES �
 ```C++
 void aes_encrypt_4(const UNBYTE *in, UNBYTE *out, const void *key)
 {
-	AES_RK* rk = (AES_RK*)key;
-	int nr = rk->nr;
 	__asm
 	{
 		pushad
@@ -98,55 +96,11 @@ void aes_encrypt_4(const UNBYTE *in, UNBYTE *out, const void *key)
 			aesenc xmm1, xmm4
 			aesenc xmm2, xmm4
 			aesenc xmm3, xmm4
-
-			cmp nr, 0x0a
-			je A
-			movdqu xmm6, [ebx + 0xb0]
-			movdqu xmm7, [ebx + 0xc0]
-			aesenc xmm0, xmm5
-			aesenc xmm1, xmm5
-			aesenc xmm2, xmm5
-			aesenc xmm3, xmm5
-			aesenc xmm0, xmm6
-			aesenc xmm1, xmm6
-			aesenc xmm2, xmm6
-			aesenc xmm3, xmm6
-
-			cmp nr, 0x0c
-			je B
-			jmp C
-
-			A :
-			aesenclast xmm0, xmm5
-			aesenclast xmm1, xmm5
-			aesenclast xmm2, xmm5
-			aesenclast xmm3, xmm5
-			jmp LAST
-
-			B :
-			aesenclast xmm0, xmm7
-			aesenclast xmm1, xmm7
-			aesenclast xmm2, xmm7
-			aesenclast xmm3, xmm7
-			jmp LAST
-
-			C :
-			aesenc xmm0, xmm7
-			aesenc xmm1, xmm7
-			aesenc xmm2, xmm7
-			aesenc xmm3, xmm7
-			movdqu xmm4, [ebx + 0xd0]
-			movdqu xmm5, [ebx + 0xe0]
-			aesenc xmm0, xmm4
-			aesenc xmm1, xmm4
-			aesenc xmm2, xmm4
-			aesenc xmm3, xmm4
 			aesenclast xmm0, xmm5
 			aesenclast xmm1, xmm5
 			aesenclast xmm2, xmm5
 			aesenclast xmm3, xmm5
 
-			LAST :
 			mov ecx, out
 			movdqu[ecx], xmm0
 			movdqu[ecx + 0x10], xmm1
